@@ -1,3 +1,5 @@
+import * as net from "net";
+
 // A promise-based API for TCP sockets.
 type TCPConn = {
   // the JS socket object
@@ -70,7 +72,7 @@ function soWrite(conn: TCPConn, data: Buffer): Promise<void> {
       reject(conn.err)
       return
     }
-    conn.socket.write(data, (err?: Error) => {
+    conn.socket.write(data, (err?: Error | null) => {
       if (err) {
         reject(err)
       } else {
