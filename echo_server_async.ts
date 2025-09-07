@@ -36,3 +36,34 @@ server.on('connection', (socket: net.Socket) => {
   newConn(socket).catch(console.error);
 });
 server.listen({ host: '127.0.0.1', port: 1234 });
+
+type TCPListener = {
+  server: net.Server;
+};
+
+async function soListen(address: string, port: number): Promise<TCPListener> {
+  const server = net.createServer()
+
+  return new Promise((resolve, reject) => {
+    server.listen(port, address, () => {
+      resolve({ server })
+    })
+    server.on('error', (err) => {
+      reject(err)
+    })
+  })
+};
+
+type TCPConn = {
+  socket: net.Socket
+}
+
+function soAccept(listener: TCPListener): Promise<TCPConn> {
+  return new Promise((resolve, reject) => {
+    listener.server.once('connection', (socket) => {
+      resolve({ socket })
+    })
+
+    listener.server.on('error', reject)
+  })
+}
